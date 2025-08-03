@@ -1,19 +1,32 @@
 import { getAvailability } from "$lib/pi";
+import type { Price } from "./types";
 
 export const load = async () => {
-  const piPrices: Record<string, { price: number; provider: string }> = {};
+  const piCommunityPrices: Record<string, Price> = {};
+  const piSecurePrices: Record<string, Price> = {};
   for (const [gpu, entries] of Object.entries(await getAvailability())) {
     for (const entry of entries) {
       if (entry.prices.currency != "USD") continue;
-      const price = Math.min(
-        entry.prices.communityPrice || Infinity,
-        entry.prices.onDemand || Infinity,
-      );
-      if (price == Infinity) continue;
-      if (piPrices[gpu] && piPrices[gpu].price < price) continue;
-      piPrices[gpu] = { price, provider: entry.provider };
+      if (
+        entry.prices.communityPrice &&
+        (piCommunityPrices[gpu]?.price || Infinity > entry.prices.communityPrice)
+      ) {
+        piCommunityPrices[gpu] = {
+          price: entry.prices.communityPrice,
+          provider: entry.provider,
+        };
+      }
+      if (
+        entry.prices.onDemand &&
+        (piSecurePrices[gpu]?.price || Infinity > entry.prices.onDemand)
+      ) {
+        piSecurePrices[gpu] = {
+          price: entry.prices.onDemand,
+          provider: entry.provider,
+        };
+      }
     }
   }
   // const deepinfraPrices = { B200_180GB: 2.49 }
-  return { piPrices };
+  return { piCommunityPrices, piSecurePrices };
 };
