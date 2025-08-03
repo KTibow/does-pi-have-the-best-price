@@ -9,7 +9,7 @@ export const load = async () => {
       if (entry.prices.currency != "USD") continue;
       if (
         entry.prices.communityPrice &&
-        (piCommunityPrices[gpu]?.price || Infinity > entry.prices.communityPrice)
+        (piCommunityPrices[gpu]?.price || Infinity) > entry.prices.communityPrice
       ) {
         piCommunityPrices[gpu] = {
           price: entry.prices.communityPrice,
@@ -18,7 +18,7 @@ export const load = async () => {
       }
       if (
         entry.prices.onDemand &&
-        (piSecurePrices[gpu]?.price || Infinity > entry.prices.onDemand)
+        (piSecurePrices[gpu]?.price || Infinity) > entry.prices.onDemand
       ) {
         piSecurePrices[gpu] = {
           price: entry.prices.onDemand,
