@@ -14,11 +14,14 @@ type Prices = {
   communityPrice?: number;
   currency: string;
 };
-type Entry = {
+export type Entry = {
   prices: Prices;
   provider: string;
   isSpot?: boolean;
 };
+type ClusterEntry = Entry & { gpuCount: number };
 
 export const getAvailability = async () =>
   (await getPage("availability")) as Record<string, Entry[]>;
+export const getClusterAvailability = async () =>
+  (await getPage("availability/clusters")) as Record<string, ClusterEntry[]>;

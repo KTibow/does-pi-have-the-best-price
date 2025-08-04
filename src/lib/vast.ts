@@ -23,6 +23,7 @@ export const getAsks = async (excludeSpot: boolean, requireDatacenter: boolean) 
   return offers as {
     gpu_name: string;
     gpu_ram: number;
+    num_gpus: number;
     search: { totalHour: number };
     geolocation: string;
   }[];

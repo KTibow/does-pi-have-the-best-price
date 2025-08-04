@@ -45,7 +45,8 @@
   </form>
 </header>
 {#each gpusProcessed as [gpu, data]}
-  {@const [gpuMain, gpuRAM] = gpu.split("_")}
+  {@const [gpuMain, ...gpuRAMBits] = gpu.split("_")}
+  {@const gpuRAM = gpuRAMBits.join(" ")}
   {@const enableCheapest = Object.values(data).length > 1}
   {@const piPrice = data["Prime Intellect"]?.price}
   {@const cheapestPrice = Math.min(...Object.values(data).map((x) => x.price))}

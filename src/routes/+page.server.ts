@@ -1,4 +1,4 @@
-import { getAvailability } from "$lib/pi";
+import { getAvailability, getClusterAvailability, type Entry } from "$lib/pi";
 import { getAsks } from "$lib/vast";
 import type { Price } from "./types";
 type Prices = Record<string, Price>;
@@ -6,26 +6,34 @@ type Prices = Record<string, Price>;
 const load1 = async (excludeSpot: boolean) => {
   const PI: Prices = {};
   const PISecure: Prices = {};
+  const processEntry = (gpu: string, entry: Entry) => {
+    if (entry.prices.currency != "USD") return;
+    if (excludeSpot && entry.isSpot) return;
+    const minPrice = Math.min(
+      entry.prices.communityPrice || Infinity,
+      entry.prices.onDemand || Infinity,
+    );
+    if (minPrice && (PI[gpu]?.price || Infinity) > minPrice) {
+      PI[gpu] = {
+        price: minPrice,
+        provider: entry.provider,
+      };
+    }
+    if (entry.prices.onDemand && (PISecure[gpu]?.price || Infinity) > entry.prices.onDemand) {
+      PISecure[gpu] = {
+        price: entry.prices.onDemand,
+        provider: entry.provider,
+      };
+    }
+  };
   for (const [gpu, entries] of Object.entries(await getAvailability())) {
     for (const entry of entries) {
-      if (entry.prices.currency != "USD") continue;
-      if (excludeSpot && entry.isSpot) continue;
-      const minPrice = Math.min(
-        entry.prices.communityPrice || Infinity,
-        entry.prices.onDemand || Infinity,
-      );
-      if (minPrice && (PI[gpu]?.price || Infinity) > minPrice) {
-        PI[gpu] = {
-          price: minPrice,
-          provider: entry.provider,
-        };
-      }
-      if (entry.prices.onDemand && (PISecure[gpu]?.price || Infinity) > entry.prices.onDemand) {
-        PISecure[gpu] = {
-          price: entry.prices.onDemand,
-          provider: entry.provider,
-        };
-      }
+      processEntry(gpu, entry);
+    }
+  }
+  for (const [gpu, entries] of Object.entries(await getClusterAvailability())) {
+    for (const entry of entries) {
+      processEntry(`${gpu}_x${entry.gpuCount}`, entry);
     }
   }
   return { "Prime Intellect": PI, "Prime Intellect Secure": PISecure };
@@ -72,6 +80,7 @@ const load2 = async (excludeSpot: boolean) => {
         if (!name) {
           continue;
         }
+        if (entry.num_gpus > 1) name += `_x${entry.num_gpus}`;
         nFound++;
 
         const price = entry.search.totalHour;
@@ -89,7 +98,13 @@ const load2 = async (excludeSpot: boolean) => {
   return { Vast, VastSecure };
 };
 const load3 = async () => {
-  const prices = { B200_180GB: { price: 2.49, provider: "VC money" } };
+  const getPrice = (price: number) => ({ price, provider: "VC money" });
+  const prices = {
+    B200_180GB: getPrice(2.49),
+    B200_180GB_x2: getPrice(2.49 * 2),
+    B200_180GB_x4: getPrice(2.49 * 4),
+    B200_180GB_x8: getPrice(2.49 * 8),
+  };
   return {
     DeepInfra: prices,
     DeepInfraSecure: prices,
@@ -104,9 +119,9 @@ const load4 = async (excludeSpot: boolean) => {
 
   const SaladSecure: Prices = {
     // SaladCloud Secure Cards (8x Clusters)
-    A100_40GB: price(3.2, 7.6),
-    A100_80GB: price(4.0, 8.0),
-    L40S_48GB: price(2.56, 6.48),
+    A100_40GB_x8: price(0.4 * 8, 0.95 * 8),
+    A100_80GB_x8: price(0.5 * 8, 1.0 * 8),
+    L40S_48GB_x8: price(0.32 * 8, 0.81 * 8),
   };
   const Salad: Prices = {
     ...SaladSecure,
@@ -151,8 +166,35 @@ const load4 = async (excludeSpot: boolean) => {
   };
   return { Salad, SaladSecure };
 };
-// sf compute implementation (once the aug 5 "onboarding" passes)...
-// "not on prime intellect" gpu logic...
+const load5 = async (excludeSpot: boolean) => {
+  // TODO: once I get on to SF Compute, make this use the real api
+  // instead of these estimates
+  const getPrice = (price: number) => ({ price, provider: "Also VC money" });
+  const prices = excludeSpot
+    ? {
+        H100_80GB_x8: getPrice(1.4 * 8),
+        H100_80GB_x16: getPrice(1.4 * 16),
+        H100_80GB_x32: getPrice(1.4 * 32),
+        H100_80GB_x64: getPrice(1.4 * 64),
+        H100_80GB_x128: getPrice(1.44 * 128),
+        H100_80GB_x256: getPrice(1.77 * 256),
+        H200_141GB_x8: getPrice(2.05 * 8),
+        H200_141GB_x16: getPrice(2.05 * 16),
+        H200_141GB_x32: getPrice(2.74 * 32),
+      }
+    : {
+        H100_80GB_x8: getPrice(1.39 * 8),
+        H100_80GB_x16: getPrice(1.39 * 16),
+        H100_80GB_x32: getPrice(1.39 * 32),
+        H100_80GB_x64: getPrice(1.39 * 64),
+        H100_80GB_x128: getPrice(1.44 * 128),
+        H100_80GB_x256: getPrice(1.55 * 256),
+        H200_141GB_x8: getPrice(1.31 * 8),
+        H200_141GB_x16: getPrice(1.34 * 16),
+        H200_141GB_x32: getPrice(1.34 * 32),
+      };
+  return { "SF Compute": prices, "SF Compute Secure": prices };
+};
 export const load = async (event) => {
   const excludeSpot = event.url.searchParams.get("exclude-spot") == "true";
   let gpus: Record<string, Record<string, Price>> = {};
@@ -160,7 +202,13 @@ export const load = async (event) => {
   for (const [source, prices] of Object.entries(
     Object.assign(
       {},
-      ...(await Promise.all([load1(excludeSpot), load2(excludeSpot), load3(), load4(excludeSpot)])),
+      ...(await Promise.all([
+        load1(excludeSpot),
+        load2(excludeSpot),
+        load3(),
+        load4(excludeSpot),
+        load5(excludeSpot),
+      ])),
     ) as Record<string, Prices>,
   )) {
     for (const [gpu, price] of Object.entries(prices)) {
