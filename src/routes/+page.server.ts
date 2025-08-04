@@ -170,7 +170,7 @@ const load4 = async (excludeSpot: boolean) => {
 const load5 = async (excludeSpot: boolean) => {
   // TODO: once I get on to SF Compute, make this use the real api
   // instead of these estimates
-  const getPrice = (price: number) => ({ price, provider: "Also VC money" });
+  const getPrice = (price: number) => ({ price, provider: "more VC money" });
   const prices = excludeSpot
     ? {
         H100_80GB_x8: getPrice(1.4 * 8),
