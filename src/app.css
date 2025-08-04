@@ -7,6 +7,7 @@
   padding: 1.5rem;
   background-color: rgb(var(--m3-scheme-background));
   color: rgb(var(--m3-scheme-on-background));
+  font-feature-settings: "tnum";
 }
 @media (prefers-color-scheme: light) {
   :root {

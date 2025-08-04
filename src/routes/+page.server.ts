@@ -4,8 +4,8 @@ import type { Price } from "./types";
 type Prices = Record<string, Price>;
 
 const load1 = async (excludeSpot: boolean) => {
-  const pi: Prices = {};
-  const piSecure: Prices = {};
+  const PI: Prices = {};
+  const PISecure: Prices = {};
   for (const [gpu, entries] of Object.entries(await getAvailability())) {
     for (const entry of entries) {
       if (entry.prices.currency != "USD") continue;
@@ -14,21 +14,21 @@ const load1 = async (excludeSpot: boolean) => {
         entry.prices.communityPrice || Infinity,
         entry.prices.onDemand || Infinity,
       );
-      if (minPrice && (pi[gpu]?.price || Infinity) > minPrice) {
-        pi[gpu] = {
+      if (minPrice && (PI[gpu]?.price || Infinity) > minPrice) {
+        PI[gpu] = {
           price: minPrice,
           provider: entry.provider,
         };
       }
-      if (entry.prices.onDemand && (piSecure[gpu]?.price || Infinity) > entry.prices.onDemand) {
-        piSecure[gpu] = {
+      if (entry.prices.onDemand && (PISecure[gpu]?.price || Infinity) > entry.prices.onDemand) {
+        PISecure[gpu] = {
           price: entry.prices.onDemand,
           provider: entry.provider,
         };
       }
     }
   }
-  return { pi, piSecure };
+  return { "Prime Intellect": PI, "Prime Intellect Secure": PISecure };
 };
 const load2 = async (excludeSpot: boolean) => {
   const getLocationName = (location: string) => {
@@ -38,7 +38,7 @@ const load2 = async (excludeSpot: boolean) => {
     if (countries.includes(firstPart)) return firstPart;
     return location;
   };
-  const [vast, vastSecure] = await Promise.all(
+  const [Vast, VastSecure] = await Promise.all(
     [getAsks(excludeSpot, false), getAsks(excludeSpot, true)].map(async (asksPromise) => {
       const asks = await asksPromise;
       const prices: Prices = {};
@@ -86,22 +86,24 @@ const load2 = async (excludeSpot: boolean) => {
       return prices;
     }),
   );
-  return { vast, vastSecure };
+  return { Vast, VastSecure };
 };
 // const deepinfraPrices = { B200_180GB: 2.49 }
 // sf compute implementation...
 // salad implementation...
 export const load = async (event) => {
-  const excludeSpot = event.url.searchParams.get("exclude-spot") == "on";
+  const excludeSpot = event.url.searchParams.get("exclude-spot") == "true";
   const gpus: Record<string, Record<string, Price>> = {};
   const gpusSecure: Record<string, Record<string, Price>> = {};
   for (const [source, prices] of Object.entries(
     Object.assign({}, ...(await Promise.all([load1(excludeSpot), load2(excludeSpot)]))),
   )) {
-    for (const [gpu, price] of Object.entries(prices)) {
+    for (const [gpu, price] of Object.entries(prices).sort(([gpuA], [gpuB]) =>
+      gpuA.localeCompare(gpuB),
+    )) {
       if (source.endsWith("Secure")) {
         const gpuData = (gpusSecure[gpu] ||= {});
-        gpuData[source.replace("Secure", "")] = price;
+        gpuData[source.replace("Secure", "").trim()] = price;
       } else {
         const gpuData = (gpus[gpu] ||= {});
         gpuData[source] = price;
