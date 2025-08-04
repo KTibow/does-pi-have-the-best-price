@@ -88,19 +88,82 @@ const load2 = async (excludeSpot: boolean) => {
   );
   return { Vast, VastSecure };
 };
-// const deepinfraPrices = { B200_180GB: 2.49 }
-// sf compute implementation...
-// salad implementation...
+const load3 = async () => {
+  const prices = { B200_180GB: { price: 2.49, provider: "VC money" } };
+  return {
+    DeepInfra: prices,
+    DeepInfraSecure: prices,
+  };
+};
+const load4 = async (excludeSpot: boolean) => {
+  const cpuMemCost = 0.004 * 4 + 0.001 * 8;
+  const price = (batch: number, normal: number) => ({
+    price: cpuMemCost + (excludeSpot ? normal : batch),
+    provider: "9 year old gamers",
+  });
+
+  const SaladSecure: Prices = {
+    // SaladCloud Secure Cards (8x Clusters)
+    A100_40GB: price(3.2, 7.6),
+    A100_80GB: price(4.0, 8.0),
+    L40S_48GB: price(2.56, 6.48),
+  };
+  const Salad: Prices = {
+    ...SaladSecure,
+
+    // RTX 5000 Series
+    RTX5090_32GB: price(0.27, 0.45),
+    RTX5080_16GB: price(0.195, 0.42),
+
+    // RTX 4000 Series
+    RTX4090_24GB: price(0.18, 0.3),
+    RTX4080_16GB: price(0.13, 0.28),
+    // RTX4070Ti_Super_16GB: price(0.13, 0.26),
+    RTX4070Ti_12GB: price(0.1, 0.24),
+    RTX4070_12GB: price(0.1, 0.22),
+    RTX4060Ti_16GB: price(0.1, 0.22),
+
+    // RTX 3000 Series
+    RTX3090Ti_24GB: price(0.13, 0.28),
+    RTX3090_24GB: price(0.1, 0.25),
+    RTX3080Ti_12GB: price(0.1, 0.22),
+    RTX3080_10GB: price(0.09, 0.18),
+    RTX3070Ti_8GB: price(0.07, 0.1),
+    RTX3070_8GB: price(0.07, 0.1),
+    RTX3060_12GB: price(0.06, 0.08),
+    RTX3050_8GB: price(0.04, 0.07),
+
+    // RTX 2000 Series
+    RTX2080Ti_11GB: price(0.08, 0.1),
+    RTX2080_8GB: price(0.06, 0.08),
+    RTX2070_8GB: price(0.03, 0.06),
+    RTX2060_6GB: price(0.03, 0.05),
+
+    // GTX 1000 Series
+    // GTX1660_Super_6GB: price(0.03, 0.04),
+    GTX1660_6GB: price(0.03, 0.04),
+    GTX1650_4GB: price(0.02, 0.02),
+    GTX1080Ti_8GB: price(0.03, 0.04),
+    GTX1080_8GB: price(0.03, 0.04),
+    GTX1070_8GB: price(0.03, 0.04),
+    GTX1060_6GB: price(0.02, 0.03),
+    GTX1050Ti_4GB: price(0.02, 0.02),
+  };
+  return { Salad, SaladSecure };
+};
+// sf compute implementation (once the aug 5 "onboarding" passes)...
+// "not on prime intellect" gpu logic...
 export const load = async (event) => {
   const excludeSpot = event.url.searchParams.get("exclude-spot") == "true";
-  const gpus: Record<string, Record<string, Price>> = {};
-  const gpusSecure: Record<string, Record<string, Price>> = {};
+  let gpus: Record<string, Record<string, Price>> = {};
+  let gpusSecure: Record<string, Record<string, Price>> = {};
   for (const [source, prices] of Object.entries(
-    Object.assign({}, ...(await Promise.all([load1(excludeSpot), load2(excludeSpot)]))),
+    Object.assign(
+      {},
+      ...(await Promise.all([load1(excludeSpot), load2(excludeSpot), load3(), load4(excludeSpot)])),
+    ) as Record<string, Prices>,
   )) {
-    for (const [gpu, price] of Object.entries(prices).sort(([gpuA], [gpuB]) =>
-      gpuA.localeCompare(gpuB),
-    )) {
+    for (const [gpu, price] of Object.entries(prices)) {
       if (source.endsWith("Secure")) {
         const gpuData = (gpusSecure[gpu] ||= {});
         gpuData[source.replace("Secure", "").trim()] = price;
@@ -110,5 +173,20 @@ export const load = async (event) => {
       }
     }
   }
+  const sortByPrice = (obj: Record<string, Record<string, Price>>) => {
+    const sorted: Record<string, Record<string, Price>> = {};
+    Object.entries(obj)
+      .sort(([, sourcesA], [, sourcesB]) => {
+        const minA = Math.min(...Object.values(sourcesA).map((p) => p.price));
+        const minB = Math.min(...Object.values(sourcesB).map((p) => p.price));
+        return minA - minB;
+      })
+      .forEach(([gpu, sources]) => {
+        sorted[gpu] = sources;
+      });
+    return sorted;
+  };
+  gpus = sortByPrice(gpus);
+  gpusSecure = sortByPrice(gpusSecure);
   return { excludeSpot, gpusAll: gpus, gpusSecure };
 };

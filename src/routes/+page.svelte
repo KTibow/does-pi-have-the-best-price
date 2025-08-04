@@ -4,9 +4,19 @@
   import Branding from "./Branding.svelte";
   let { data } = $props();
   let { excludeSpot, gpusAll, gpusSecure } = $derived(data);
+  let onlyShow: "all" | "pi" | "pi-competition" = $state("pi");
   let includeCommunity = $state(true);
   let includeSpot = $derived(!excludeSpot);
   let gpus = $derived(includeCommunity ? gpusAll : gpusSecure);
+  let gpusProcessed = $derived(
+    Object.entries(gpus).filter(([gpu, data]) => {
+      if (onlyShow == "all") return true;
+
+      if (!("Prime Intellect" in data)) return false;
+      if (onlyShow == "pi-competition" && Object.keys(data).length < 2) return false;
+      return true;
+    }),
+  );
 
   let settingsForm: HTMLFormElement | undefined = $state();
 </script>
@@ -14,6 +24,11 @@
 <header>
   <Branding />
   <div class="spacer"></div>
+  <select bind:value={onlyShow}>
+    <option value="all">All</option>
+    <option value="pi">Incs. PI</option>
+    <option value="pi-competition">Incs. PI competition</option>
+  </select>
   <label>
     {includeCommunity ? "Inc. community" : "Only secure"}
     <Switch bind:checked={includeCommunity} />
@@ -21,7 +36,7 @@
   <form bind:this={settingsForm}>
     <input type="hidden" name="exclude-spot" value={includeSpot ? undefined : "true"} />
     <label>
-      {includeSpot ? "Inc. spot" : "Spot excluded"}
+      {!excludeSpot ? "Inc. spot" : "Spot excluded"}
       <Switch
         bind:checked={includeSpot}
         onchange={() => tick().then(() => settingsForm!.requestSubmit())}
@@ -29,10 +44,10 @@
     </label>
   </form>
 </header>
-{#each Object.entries(gpus) as [gpu, data]}
+{#each gpusProcessed as [gpu, data]}
   {@const [gpuMain, gpuRAM] = gpu.split("_")}
   {@const enableCheapest = Object.values(data).length > 1}
-  {@const piPrice = data["Prime Intellect"].price}
+  {@const piPrice = data["Prime Intellect"]?.price}
   {@const cheapestPrice = Math.min(...Object.values(data).map((x) => x.price))}
   {@const leaderboard = Object.entries(data).sort(
     ([, { price: priceA }], [, { price: priceB }]) => priceA - priceB,
