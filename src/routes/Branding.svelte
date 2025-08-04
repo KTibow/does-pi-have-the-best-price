@@ -1,7 +1,6 @@
 <script lang="ts">
   const name = "Does Prime Intellect Have The Best Price?";
-  const description =
-    "Prime Intellect doesn't always have the best price because it doesn't have all the GPU providers of the world.";
+  const description = "Not always - it doesn't have all the GPU providers of the world.";
   const github = "https://github.com/KTibow/does-pi-have-the-best-price";
 </script>
 
