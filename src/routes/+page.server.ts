@@ -1,3 +1,4 @@
+import { getExecutors } from "$lib/lium";
 import { getAvailability, getClusterAvailability, type Entry } from "$lib/pi";
 import { getAsks } from "$lib/vast";
 import type { Price } from "./types";
@@ -195,6 +196,31 @@ const load5 = async (excludeSpot: boolean) => {
       };
   return { "SF Compute": prices, "SF Compute Secure": prices };
 };
+const load6 = async () => {
+  const Lium: Prices = {};
+  for (const executor of await getExecutors()) {
+    let name = "";
+    if (executor.machine_name == "NVIDIA A100-SXM4-80GB") name = "A100_80GB";
+    if (executor.machine_name == "NVIDIA GeForce RTX 4090") name = "RTX4090_24GB";
+    if (executor.machine_name == "NVIDIA H100 PCIe") name = "H100_80GB";
+    if (executor.machine_name == "NVIDIA H200") name = "H200_141GB";
+    if (executor.machine_name == "NVIDIA L4") name = "L4_24GB";
+    if (!name) {
+      console.log(executor.machine_name);
+      continue;
+    }
+    if (executor.specs.gpu.count > 1) name += `_x${executor.specs.gpu.count}`;
+
+    const price = executor.price_per_hour;
+    if ((Lium[name]?.price || Infinity) > price) {
+      Lium[name] = {
+        price,
+        provider: executor.location.country,
+      };
+    }
+  }
+  return { Lium };
+};
 export const load = async (event) => {
   const excludeSpot = event.url.searchParams.get("exclude-spot") == "true";
   let gpus: Record<string, Record<string, Price>> = {};
@@ -208,6 +234,7 @@ export const load = async (event) => {
         load3(),
         load4(excludeSpot),
         load5(excludeSpot),
+        load6(),
       ])),
     ) as Record<string, Prices>,
   )) {
