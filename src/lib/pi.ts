@@ -1,11 +1,13 @@
 import { PRIME_INTELLECT_KEY } from "$env/static/private";
 
-const getPage = async <T>(path: string) => {
+const getPage = async (path: string) => {
   const resp = await fetch(`https://api.primeintellect.ai/api/v1/${path}`, {
     headers: { authorization: `Bearer ${PRIME_INTELLECT_KEY}` },
   });
-  const data = await resp.json();
-  return data as T;
+  if (!resp.ok) {
+    throw new Error(`Prime Intellect is ${resp.status}ing`);
+  }
+  return await resp.json();
 };
 type Prices = {
   onDemand?: number;
@@ -15,6 +17,8 @@ type Prices = {
 type Entry = {
   prices: Prices;
   provider: string;
+  isSpot?: boolean;
 };
 
-export const getAvailability = () => getPage<Record<string, Entry[]>>("availability");
+export const getAvailability = async () =>
+  (await getPage("availability")) as Record<string, Entry[]>;
