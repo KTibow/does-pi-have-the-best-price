@@ -58,15 +58,29 @@ const load2 = async (excludeSpot: boolean) => {
         let name = "";
         if (entry.gpu_name == "A10" && Math.abs(24000 - entry.gpu_ram) < 1000) name = "A10_24GB";
         if (entry.gpu_name == "A40" && entry.gpu_ram == 46068) name = "A40_48GB";
+        if (entry.gpu_name == "L4" && entry.gpu_ram == 23034) name = "L40_24GB";
         if (entry.gpu_name == "L40" && entry.gpu_ram == 46068) name = "L40_48GB";
         if (entry.gpu_name == "L40S" && entry.gpu_ram == 46068) name = "L40S_48GB";
+        if (entry.gpu_name == "RTX 3060 Ti" && entry.gpu_ram == 8192) name = "RTX3060Ti_8GB";
+        if (entry.gpu_name == "RTX 3060" && entry.gpu_ram == 12288) name = "RTX3060_12GB";
+        if (entry.gpu_name == "RTX 3070 Ti" && entry.gpu_ram == 8192) name = "RTX3070Ti_8GB";
+        if (entry.gpu_name == "RTX 3070" && entry.gpu_ram == 8192) name = "RTX3070_8GB";
         if (entry.gpu_name == "RTX 3080 Ti" && entry.gpu_ram == 12288) name = "RTX3080Ti_12GB";
         if (entry.gpu_name == "RTX 3080" && entry.gpu_ram == 10240) name = "RTX3080_10GB";
         if (entry.gpu_name == "RTX 3090 Ti" && entry.gpu_ram == 24564) name = "RTX3090Ti_24GB";
         if (entry.gpu_name == "RTX 3090" && entry.gpu_ram == 24576) name = "RTX3090_24GB";
+        if (entry.gpu_name == "RTX 4060 Ti" && entry.gpu_ram == 16380) name = "RTX4060Ti_16GB";
         if (entry.gpu_name == "RTX 4070 Ti" && entry.gpu_ram == 12282) name = "RTX4070Ti_12GB";
+        if (entry.gpu_name == "RTX 4070" && entry.gpu_ram == 12282) name = "RTX4070_12GB";
+        if (entry.gpu_name == "RTX 4070S Ti" && entry.gpu_ram == 16376) name = "RTX4070STi_16GB";
+        if (entry.gpu_name == "RTX 4070S" && entry.gpu_ram == 12282) name = "RTX4070S_12GB";
         if (entry.gpu_name == "RTX 4080" && entry.gpu_ram == 16376) name = "RTX4080_16GB";
+        if (entry.gpu_name == "RTX 4080S" && entry.gpu_ram == 16376) name = "RTX4080S_16GB";
         if (entry.gpu_name == "RTX 4090" && entry.gpu_ram == 24564) name = "RTX4090_24GB";
+        if (entry.gpu_name == "RTX 5060 Ti" && entry.gpu_ram == 16311) name = "RTX5060_16GB";
+        if (entry.gpu_name == "RTX 5070 Ti" && entry.gpu_ram == 16303) name = "RTX5070Ti_16GB";
+        if (entry.gpu_name == "RTX 5070" && entry.gpu_ram == 12227) name = "RTX5070_12GB";
+        if (entry.gpu_name == "RTX 5080" && entry.gpu_ram == 16303) name = "RTX5080_16GB";
         if (entry.gpu_name == "RTX 5090" && entry.gpu_ram == 32607) name = "RTX5090_32GB";
         if (entry.gpu_name == "RTX 6000Ada" && entry.gpu_ram == 49140) name = "RTX6000Ada_48GB";
         if (entry.gpu_name == "RTX A4000" && entry.gpu_ram == 16376) name = "A4000_16GB";
@@ -134,7 +148,7 @@ const load4 = async (excludeSpot: boolean) => {
     // RTX 4000 Series
     RTX4090_24GB: price(0.18, 0.3),
     RTX4080_16GB: price(0.13, 0.28),
-    // RTX4070Ti_Super_16GB: price(0.13, 0.26),
+    RTX4070STi_16GB: price(0.13, 0.26),
     RTX4070Ti_12GB: price(0.1, 0.24),
     RTX4070_12GB: price(0.1, 0.22),
     RTX4060Ti_16GB: price(0.1, 0.22),
@@ -156,7 +170,7 @@ const load4 = async (excludeSpot: boolean) => {
     RTX2060_6GB: price(0.03, 0.05),
 
     // GTX 1000 Series
-    // GTX1660_Super_6GB: price(0.03, 0.04),
+    GTX1660S_6GB: price(0.03, 0.04),
     GTX1660_6GB: price(0.03, 0.04),
     GTX1650_4GB: price(0.02, 0.02),
     GTX1080Ti_8GB: price(0.03, 0.04),
