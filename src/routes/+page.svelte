@@ -13,8 +13,7 @@
       if (onlyShow == "all") return true;
 
       if (!("Prime Intellect" in data)) return false;
-      if (onlyShow == "pi-competition" && Object.keys(data).length < 2) return false;
-      return true;
+      return onlyShow == "pi-competition" ? Object.keys(data).length >= 2 : true;
     }),
   );
 
@@ -44,43 +43,50 @@
     </label>
   </form>
 </header>
-{#each gpusProcessed as [gpu, data]}
-  {@const [gpuMain, ...gpuRAMBits] = gpu.split("_")}
-  {@const gpuRAM = gpuRAMBits.join(" ")}
-  {@const piPrice = data["Prime Intellect"]?.price}
-  {@const enableCheapest = piPrice && Object.keys(data).find((x) => x != "Prime Intellect")}
-  {@const cheapestPrice = Math.min(...Object.values(data).map((x) => x.price))}
-  {@const leaderboard = Object.entries(data).sort(
-    ([, { price: priceA }], [, { price: priceB }]) => priceA - priceB,
-  )}
-  <h2 class="m3-font-headline-large">
-    {gpuMain}
-    <span style:opacity="0.5">{gpuRAM}</span>
-    <div class="spacer"></div>
-    {#if enableCheapest}
-      {#if piPrice == cheapestPrice}
-        <div class="status m3-font-body-large green">Yes.</div>
-      {:else}
-        <div class="status m3-font-body-large red">No.</div>
-      {/if}
-    {/if}
-  </h2>
-  {#each leaderboard as [source, { price, provider }]}
+<div class="gpus">
+  {#each gpusProcessed as [gpu, data]}
+    {@const [gpuMain, ...gpuRAMBits] = gpu.split("_")}
+    {@const gpuRAM = gpuRAMBits.join(" ")}
+    {@const piPrice = data["Prime Intellect"]?.price}
+    {@const enableCheapest = piPrice && Object.keys(data).find((x) => x != "Prime Intellect")}
+    {@const cheapestPrice = Math.min(...Object.values(data).map((x) => x.price))}
+    {@const leaderboard = Object.entries(data).sort(
+      ([, { price: priceA }], [, { price: priceB }]) => priceA - priceB,
+    )}
     <div
-      class="card"
-      class:green={source == "Prime Intellect" && enableCheapest && price == cheapestPrice}
-      class:red={source == "Prime Intellect" && enableCheapest && price != cheapestPrice}
+      class="gpu"
+      class:green={enableCheapest && piPrice == cheapestPrice}
+      class:red={enableCheapest && piPrice != cheapestPrice}
     >
-      <h3>
-        <span title="From {provider}">{source}</span>
-        <div class="spacer"></div>
-        ${price.toFixed(2)}
-      </h3>
+      <h2 class="m3-font-headline-large">
+        {gpuMain}
+        <span style:opacity="0.5">{gpuRAM}</span>
+      </h2>
+      {#if enableCheapest}
+        {#if piPrice == cheapestPrice}
+          <div class="status colored m3-font-body-large">Yes.</div>
+        {:else}
+          <div class="status colored m3-font-body-large">No.</div>
+        {/if}
+      {/if}
+      {#each leaderboard as [source, { price, provider }]}
+        <div class="card" class:colored={source == "Prime Intellect"}>
+          <h3>
+            <span title="From {provider}">{source}</span>
+            <div class="spacer"></div>
+            ${price.toFixed(2)}
+          </h3>
+        </div>
+      {/each}
     </div>
   {/each}
-{/each}
+</div>
 
 <style>
+  .spacer {
+    flex-grow: 1;
+  }
+
   header {
     display: flex;
     gap: 1rem;
@@ -94,48 +100,65 @@
     gap: 0.5rem;
   }
 
-  h2,
-  .card {
-    max-width: 25rem;
+  .gpus {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .gpu {
+    flex-basis: 20rem;
+    flex-grow: 1;
+
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-content: start;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: var(--m3-util-rounding-large);
+    > * {
+      padding-inline: 0.5rem;
+      border-radius: var(--m3-util-rounding-small);
+    }
+
+    &.green {
+      outline: solid 1px rgb(0 255 0 / 0.4);
+      .colored {
+        background-color: rgb(0 255 0 / 0.2);
+      }
+    }
+    &.red {
+      outline: solid 1px rgb(255 0 0 / 0.4);
+      .colored {
+        background-color: rgb(255 0 0 / 0.2);
+      }
+    }
   }
 
   h2 {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-top: 2em;
-
-    .status {
-      display: flex;
-      align-items: center;
-      padding: 0.5rem 1rem;
-      border-radius: var(--m3-util-rounding-full);
-    }
+    margin-left: -0.125rem;
+    grid-column: 1;
+  }
+  .status {
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    grid-column: 2;
   }
 
   .card {
-    display: flex;
-    flex-direction: column;
-    padding: 0.5rem;
-    margin-top: 0.5em;
-    border-radius: var(--m3-util-rounding-large);
-    background-color: rgb(var(--m3-scheme-surface-container-low));
+    display: grid;
+    align-items: center;
+    height: 2.5rem;
+    grid-column: span 2;
   }
   h3 {
     display: flex;
     span {
       text-decoration: underline dotted;
     }
-  }
-
-  /* Last but not least (for priority reasons) */
-  .spacer {
-    flex-grow: 1;
-  }
-  .green {
-    background-color: rgb(0 255 0 / 0.2);
-  }
-  .red {
-    background-color: rgb(255 0 0 / 0.2);
   }
 </style>
