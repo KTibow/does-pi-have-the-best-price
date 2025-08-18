@@ -70,6 +70,7 @@ const load2 = async (excludeSpot: boolean) => {
         if (entry.gpu_name == "RTX 3080" && cr(10)) name = "RTX3080_10GB";
         if (entry.gpu_name == "RTX 3090 Ti" && cr(24)) name = "RTX3090Ti_24GB";
         if (entry.gpu_name == "RTX 3090" && cr(24)) name = "RTX3090_24GB";
+        if (entry.gpu_name == "RTX 4060" && cr(8)) name = "RTX4060_8GB";
         if (entry.gpu_name == "RTX 4060 Ti" && cr(16)) name = "RTX4060Ti_16GB";
         if (entry.gpu_name == "RTX 4070 Ti" && cr(12)) name = "RTX4070Ti_12GB";
         if (entry.gpu_name == "RTX 4070" && cr(12)) name = "RTX4070_12GB";
@@ -95,6 +96,7 @@ const load2 = async (excludeSpot: boolean) => {
         if (entry.gpu_name.startsWith("A100") && cr(80)) name = "A100_80GB";
         if (entry.gpu_name.startsWith("H100") && cr(80)) name = "H100_80GB";
         if (entry.gpu_name.startsWith("H200") && cr(141)) name = "H200_141GB";
+        if (entry.gpu_name.startsWith("B200") && cr(180)) name = "B200_180GB";
         if (!name) {
           continue;
         }
@@ -218,11 +220,14 @@ const load6 = async () => {
   for (const executor of await getExecutors()) {
     let name = "";
     if (executor.machine_name == "NVIDIA A100-SXM4-80GB") name = "A100_80GB";
+    if (executor.machine_name == "NVIDIA GeForce RTX 3090") name = "RTX3090_24GB";
     if (executor.machine_name == "NVIDIA GeForce RTX 4090") name = "RTX4090_24GB";
-    if (executor.machine_name == "NVIDIA H100 PCIe") name = "H100_80GB";
     if (executor.machine_name == "NVIDIA H100 80GB HBM3") name = "H100_80GB";
+    if (executor.machine_name == "NVIDIA H100 PCIe") name = "H100_80GB";
     if (executor.machine_name == "NVIDIA H200") name = "H200_141GB";
     if (executor.machine_name == "NVIDIA L4") name = "L4_24GB";
+    if (executor.machine_name == "NVIDIA RTX A4000") name = "A4000_16GB";
+    if (executor.machine_name == "NVIDIA RTX A6000") name = "A6000_48GB";
     if (!name) {
       console.log(executor.machine_name);
       continue;
