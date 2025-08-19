@@ -1,20 +1,50 @@
 <script lang="ts">
-  import { Switch } from "m3-svelte";
+  import iconRAM from "@ktibow/iconset-material-symbols/memory-alt-rounded";
+  import { Button, ConnectedButtons, Slider, Switch } from "m3-svelte";
   import { tick } from "svelte";
   import Branding from "./Branding.svelte";
+
+  const getRAM = (gpu: string) => {
+    const ramMatch = gpu.match(/_([0-9]+)GB/);
+    const countMatch = gpu.match(/_x([0-9]+)/);
+
+    if (!ramMatch) return undefined;
+
+    let ram = +ramMatch[1];
+    if (countMatch) {
+      ram *= +countMatch[1];
+    }
+
+    return ram;
+  };
   let { data } = $props();
   let { excludeSpot, gpusAll, gpusSecure } = $derived(data);
   let onlyShow: "all" | "pi" | "pi-competition" = $state("pi");
   let includeCommunity = $state(true);
   let includeSpot = $derived(!excludeSpot);
+  let minRAMRaw = $state(0);
+  let minRAM = $derived(Math.round(10 ** minRAMRaw));
   let gpus = $derived(includeCommunity ? gpusAll : gpusSecure);
+  let maxRAM = $derived(
+    Math.max(
+      ...Object.entries(gpus)
+        .filter(([k, v]) => Object.keys(v).length >= 2)
+        .map(([k]) => getRAM(k) || 0),
+    ),
+  );
   let gpusProcessed = $derived(
-    Object.entries(gpus).filter(([gpu, data]) => {
-      if (onlyShow == "all") return true;
+    Object.entries(gpus)
+      .filter(([gpu, data]) => {
+        if (onlyShow == "all") return true;
 
-      if (!("Prime Intellect" in data)) return false;
-      return onlyShow == "pi-competition" ? Object.keys(data).length >= 2 : true;
-    }),
+        if (!("Prime Intellect" in data)) return false;
+        return onlyShow == "pi-competition" ? Object.keys(data).length >= 2 : true;
+      })
+      .filter(([gpu]) => {
+        if (minRAM <= 1) return true;
+
+        return (getRAM(gpu) || 0) >= minRAM;
+      }),
   );
 
   let settingsForm: HTMLFormElement | undefined = $state();
@@ -23,26 +53,47 @@
 <header>
   <Branding />
   <div class="spacer"></div>
-  <select bind:value={onlyShow}>
-    <option value="all">All</option>
-    <option value="pi">Incs. PI</option>
-    <option value="pi-competition">Incs. PI competition</option>
-  </select>
-  <label>
-    {includeCommunity ? "Inc. community" : "Only secure"}
-    <Switch bind:checked={includeCommunity} />
-  </label>
+  <Button variant="tonal" popovertarget="settings">Settings</Button>
+</header>
+<div id="settings" class="settings" popover>
   <form bind:this={settingsForm}>
     <input type="hidden" name="exclude-spot" value={includeSpot ? undefined : "true"} />
-    <label>
-      {!excludeSpot ? "Inc. spot" : "Spot excluded"}
-      <Switch
-        bind:checked={includeSpot}
-        onchange={() => tick().then(() => settingsForm!.requestSubmit())}
-      />
-    </label>
   </form>
-</header>
+  <ConnectedButtons>
+    <input
+      type="radio"
+      value={true}
+      bind:group={includeSpot}
+      id="settings-spot-included"
+      oninput={() => tick().then(() => settingsForm!.requestSubmit())}
+    />
+    <Button for="settings-spot-included">Include spot</Button>
+    <input type="radio" value={false} bind:group={includeSpot} id="settings-spot-excluded" />
+    <Button for="settings-spot-excluded">Exclude spot</Button>
+  </ConnectedButtons>
+  <ConnectedButtons>
+    <input type="radio" value={true} bind:group={includeCommunity} id="includeCommunity-true" />
+    <Button for="includeCommunity-true">Include community</Button>
+    <input type="radio" value={false} bind:group={includeCommunity} id="includeCommunity-false" />
+    <Button for="includeCommunity-false">Only secure</Button>
+  </ConnectedButtons>
+  <ConnectedButtons>
+    <input type="radio" value="all" bind:group={onlyShow} id="onlyShow-all" />
+    <Button for="onlyShow-all">All</Button>
+    <input type="radio" value="pi" bind:group={onlyShow} id="onlyShow-pi" />
+    <Button for="onlyShow-pi">W/ Prime Intellect</Button>
+    <input type="radio" value="pi-competition" bind:group={onlyShow} id="onlyShow-pi-competition" />
+    <Button for="onlyShow-pi-competition">PI + competition</Button>
+  </ConnectedButtons>
+  <Slider
+    min={0}
+    max={Math.log10(maxRAM)}
+    format={(n) => (10 ** n).toFixed(0)}
+    size="m"
+    leadingIcon={iconRAM}
+    bind:value={minRAMRaw}
+  />
+</div>
 <div class="gpus">
   {#each gpusProcessed as [gpu, data]}
     {@const [gpuMain, ...gpuRAMBits] = gpu.split("_")}
@@ -91,13 +142,25 @@
     display: flex;
     gap: 1rem;
   }
+
   form {
-    display: contents;
+    display: none;
   }
-  label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+
+  .settings {
+    &:popover-open {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    background-color: rgb(var(--m3-scheme-surface-container-highest));
+    padding: 1rem;
+    border-end-start-radius: var(--m3-util-rounding-large);
+
+    inset: auto;
+    top: 0;
+    right: 0;
   }
 
   .gpus {

@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@ktibow/iconset-material-symbols':
+        specifier: ^0.0.1755063979
+        version: 0.0.1755063979
       '@sveltejs/adapter-cloudflare':
         specifier: ^7.1.2
         version: 7.1.2(@sveltejs/kit@2.27.0(@sveltejs/vite-plugin-svelte@6.1.0(svelte@5.37.3)(vite@7.0.6))(svelte@5.37.3)(vite@7.0.6))(wrangler@4.27.0(@cloudflare/workers-types@4.20250803.0))
@@ -530,6 +533,9 @@ packages:
 
   '@ktibow/iconset-material-symbols@0.0.1752989765':
     resolution: {integrity: sha512-J+gfYidiP0Lr1Gs8J0OsA+128Ay1UrcBjECZBCye4CBLl6KZmVc7su0vqKrkpNEnUxCJFdcC8nZAH8O2XPWurw==}
+
+  '@ktibow/iconset-material-symbols@0.0.1755063979':
+    resolution: {integrity: sha512-ru49BoA2f+GZHFk1Ha/gUqEUOqBit+8bUIYYR2lbGwH9MwOCIdbl3pgrDHbgeW+q96rDnJDyg8+HXgI8AwCLSg==}
 
   '@ktibow/material-color-utilities-nightly@0.3.11754185722110':
     resolution: {integrity: sha512-nxCiHrc6UcVrO9Ycahi3JrVJPNArMDHMZeYIBquvSAMQmZh9JcPsDy6SmgS/+J9wncEgOPUFtu2kbMU2z+vurA==}
@@ -1363,6 +1369,10 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.4
 
   '@ktibow/iconset-material-symbols@0.0.1752989765':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@ktibow/iconset-material-symbols@0.0.1755063979':
     dependencies:
       '@iconify/types': 2.0.0
 
