@@ -112,11 +112,11 @@
   </ConnectedButtons>
   <Slider
     min={0}
-    max={Math.log10(maxRAM)}
-    format={(n) => (10 ** n).toFixed(0)}
+    max={Math.log10(maxRAM) * 10}
+    format={(n) => (10 ** (n / 10)).toFixed(0)}
     size="m"
     leadingIcon={iconRAM}
-    bind:value={minRAMRaw}
+    bind:value={() => minRAMRaw * 10, (v) => (minRAMRaw = v / 10)}
   />
   <div class="arches">
     <ArchControl {professionalControl} {consumerControl} bind:otherControl />
