@@ -62,6 +62,7 @@ const load2 = async (excludeSpot: boolean) => {
         if (entry.gpu_name == "L4" && cr(24)) name = "L40_24GB";
         if (entry.gpu_name == "L40" && cr(48)) name = "L40_48GB";
         if (entry.gpu_name == "L40S" && cr(48)) name = "L40S_48GB";
+        if (entry.gpu_name == "RTX 2080 Ti" && cr(11)) name = "RTX2080Ti_11GB";
         if (entry.gpu_name == "RTX 3060 Ti" && cr(8)) name = "RTX3060Ti_8GB";
         if (entry.gpu_name == "RTX 3060" && cr(12)) name = "RTX3060_12GB";
         if (entry.gpu_name == "RTX 3070 Ti" && cr(8)) name = "RTX3070Ti_8GB";
@@ -80,7 +81,9 @@ const load2 = async (excludeSpot: boolean) => {
         if (entry.gpu_name == "RTX 4080S" && cr(16)) name = "RTX4080S_16GB";
         if (entry.gpu_name == "RTX 4090" && cr(24)) name = "RTX4090_24GB";
         if (entry.gpu_name == "RTX 5000Ada" && cr(32)) name = "RTX5000Ada_32GB";
-        if (entry.gpu_name == "RTX 5060 Ti" && cr(16)) name = "RTX5060_16GB";
+        if (entry.gpu_name == "RTX 5060" && cr(8)) name = "RTX5060_8GB";
+        if (entry.gpu_name == "RTX 5060 Ti" && cr(8)) name = "RTX5060Ti_8GB";
+        if (entry.gpu_name == "RTX 5060 Ti" && cr(16)) name = "RTX5060Ti_16GB";
         if (entry.gpu_name == "RTX 5070 Ti" && cr(16)) name = "RTX5070Ti_16GB";
         if (entry.gpu_name == "RTX 5070" && cr(12)) name = "RTX5070_12GB";
         if (entry.gpu_name == "RTX 5080" && cr(16)) name = "RTX5080_16GB";
@@ -90,14 +93,22 @@ const load2 = async (excludeSpot: boolean) => {
         if (entry.gpu_name == "RTX A4500" && cr(20)) name = "A4500_20GB";
         if (entry.gpu_name == "RTX A5000" && cr(24)) name = "A5000_24GB";
         if (entry.gpu_name == "RTX A6000" && cr(48)) name = "A6000_48GB";
-        if (entry.gpu_name == "Tesla V100" && cr(32)) name = "V100_32GB";
         if (entry.gpu_name == "Tesla V100" && cr(16)) name = "V100_16GB";
+        if (entry.gpu_name == "Tesla V100" && cr(32)) name = "V100_32GB";
+        if (entry.gpu_name == "Tesla P100" && cr(12)) name = "P100_12GB";
+        if (entry.gpu_name == "Tesla P100" && cr(16)) name = "P100_16GB";
+        if (entry.gpu_name == "Tesla P40" && cr(24)) name = "P40_24GB";
+        if (entry.gpu_name.startsWith("RTX PRO 4000") && cr(24)) name = "RTXPro4000_24GB";
+        if (entry.gpu_name.startsWith("RTX PRO 4500") && cr(48)) name = "RTXPro4500_32GB";
+        if (entry.gpu_name.startsWith("RTX PRO 5000") && cr(48)) name = "RTXPro5000_48GB";
+        if (entry.gpu_name.startsWith("RTX PRO 6000") && cr(96)) name = "RTXPro6000_96GB";
         if (entry.gpu_name.startsWith("A100") && cr(40)) name = "A100_40GB";
         if (entry.gpu_name.startsWith("A100") && cr(80)) name = "A100_80GB";
         if (entry.gpu_name.startsWith("H100") && cr(80)) name = "H100_80GB";
         if (entry.gpu_name.startsWith("H200") && cr(141)) name = "H200_141GB";
         if (entry.gpu_name.startsWith("B200") && cr(180)) name = "B200_180GB";
         if (!name) {
+          console.log(entry.gpu_name);
           continue;
         }
         if (entry.num_gpus > 1) name += `_x${entry.num_gpus}`;

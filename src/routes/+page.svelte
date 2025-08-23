@@ -1,8 +1,10 @@
 <script lang="ts">
   import iconRAM from "@ktibow/iconset-material-symbols/memory-alt-rounded";
-  import { Button, ConnectedButtons, Slider, Switch } from "m3-svelte";
+  import { Button, Checkbox, ConnectedButtons, Divider, ListItem, Slider, Switch } from "m3-svelte";
   import { tick } from "svelte";
+  import { professional, consumer } from "./arches";
   import Branding from "./Branding.svelte";
+  import ArchControl from "./ArchControl.svelte";
 
   const getRAM = (gpu: string) => {
     const ramMatch = gpu.match(/_([0-9]+)GB/);
@@ -24,6 +26,11 @@
   let includeSpot = $derived(!excludeSpot);
   let minRAMRaw = $state(0);
   let minRAM = $derived(Math.round(10 ** minRAMRaw));
+  let professionalControl = $state(
+    Object.fromEntries(Object.keys(professional).map((a) => [a, true])),
+  );
+  let consumerControl = $state(Object.fromEntries(Object.keys(consumer).map((a) => [a, true])));
+  let otherControl = $state(true);
   let gpus = $derived(includeCommunity ? gpusAll : gpusSecure);
   let maxRAM = $derived(
     Math.max(
@@ -44,6 +51,24 @@
         if (minRAM <= 1) return true;
 
         return (getRAM(gpu) || 0) >= minRAM;
+      })
+      .filter(([gpu]) => {
+        const gpuId = gpu.split("_")[0];
+        for (const arch in professional) {
+          for (const g of professional[arch]) {
+            if (gpuId == g) {
+              return professionalControl[arch];
+            }
+          }
+        }
+        for (const arch in consumer) {
+          for (const g of consumer[arch]) {
+            if (gpuId == g) {
+              return consumerControl[arch];
+            }
+          }
+        }
+        return otherControl;
       }),
   );
 
@@ -93,6 +118,9 @@
     leadingIcon={iconRAM}
     bind:value={minRAMRaw}
   />
+  <div class="arches">
+    <ArchControl {professionalControl} {consumerControl} bind:otherControl />
+  </div>
 </div>
 <div class="gpus">
   {#each gpusProcessed as [gpu, data]}
@@ -161,6 +189,15 @@
     inset: auto;
     top: 0;
     right: 0;
+
+    .arches {
+      display: flex;
+      flex-direction: column;
+      --m3-util-density-term: -1rem;
+      > :global(label) {
+        margin-inline: -1rem;
+      }
+    }
   }
 
   .gpus {
