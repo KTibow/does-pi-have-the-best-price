@@ -8,6 +8,7 @@ const load1 = async (excludeSpot: boolean) => {
   const PI: Prices = {};
   const PISecure: Prices = {};
   const processEntry = (gpu: string, entry: Entry) => {
+    gpu = gpu.replace("RTX_PRO_", "RTXPro");
     if (entry.prices.currency != "USD") return;
     if (excludeSpot && entry.isSpot) return;
     const minPrice = Math.min(
@@ -98,10 +99,10 @@ const load2 = async (excludeSpot: boolean) => {
         if (entry.gpu_name == "Tesla P100" && cr(12)) name = "P100_12GB";
         if (entry.gpu_name == "Tesla P100" && cr(16)) name = "P100_16GB";
         if (entry.gpu_name == "Tesla P40" && cr(24)) name = "P40_24GB";
-        if (entry.gpu_name.startsWith("RTX PRO 4000") && cr(24)) name = "RTXPro4000_24GB";
-        if (entry.gpu_name.startsWith("RTX PRO 4500") && cr(48)) name = "RTXPro4500_32GB";
-        if (entry.gpu_name.startsWith("RTX PRO 5000") && cr(48)) name = "RTXPro5000_48GB";
-        if (entry.gpu_name.startsWith("RTX PRO 6000") && cr(96)) name = "RTXPro6000_96GB";
+        if (entry.gpu_name.startsWith("RTX PRO 4000") && cr(24)) name = "RTXPro4000B_24GB";
+        if (entry.gpu_name.startsWith("RTX PRO 4500") && cr(48)) name = "RTXPro4500B_32GB";
+        if (entry.gpu_name.startsWith("RTX PRO 5000") && cr(48)) name = "RTXPro5000B_48GB";
+        if (entry.gpu_name.startsWith("RTX PRO 6000") && cr(96)) name = "RTXPro6000B_96GB";
         if (entry.gpu_name.startsWith("A100") && cr(40)) name = "A100_40GB";
         if (entry.gpu_name.startsWith("A100") && cr(80)) name = "A100_80GB";
         if (entry.gpu_name.startsWith("H100") && cr(80)) name = "H100_80GB";
@@ -236,6 +237,7 @@ const load6 = async () => {
     if (executor.machine_name == "NVIDIA H100 80GB HBM3") name = "H100_80GB";
     if (executor.machine_name == "NVIDIA H100 PCIe") name = "H100_80GB";
     if (executor.machine_name == "NVIDIA H200") name = "H200_141GB";
+    if (executor.machine_name == "NVIDIA B200") name = "B200_180GB";
     if (executor.machine_name == "NVIDIA L4") name = "L4_24GB";
     if (executor.machine_name == "NVIDIA RTX A4000") name = "A4000_16GB";
     if (executor.machine_name == "NVIDIA RTX A6000") name = "A6000_48GB";

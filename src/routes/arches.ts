@@ -51,8 +51,8 @@ export const consumer: Record<string, string[]> = {
     ],
   ],
   Blackwell: [
-    ...["RTX5090", "RTXPro5000", "RTXPro6000"],
-    ...["RTX5070Ti", "RTX5080", "RTXPro4000", "RTXPro4500"],
+    ...["RTX5090", "RTXPro5000B", "RTXPro6000B"],
+    ...["RTX5070Ti", "RTX5080", "RTXPro4000B", "RTXPro4500B"],
     ...["RTX5070"],
     ...["RTX5060", "RTX5060Ti", "RTX5060Ti"],
   ],
