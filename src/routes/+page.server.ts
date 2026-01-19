@@ -119,7 +119,7 @@ const load2 = async (excludeSpot: boolean) => {
         if ((prices[name]?.price || Infinity) > price) {
           prices[name] = {
             price,
-            provider: getLocationName(entry.geolocation),
+            provider: entry.geolocation ? getLocationName(entry.geolocation) : "Unknown",
           };
         }
       }
