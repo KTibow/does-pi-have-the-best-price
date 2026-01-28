@@ -85,30 +85,42 @@
     <input type="hidden" name="exclude-spot" value={includeSpot ? undefined : "true"} />
   </form>
   <ConnectedButtons>
-    <input
-      type="radio"
-      value={true}
-      bind:group={includeSpot}
-      id="settings-spot-included"
-      oninput={() => tick().then(() => settingsForm!.requestSubmit())}
-    />
-    <Button for="settings-spot-included">Include spot</Button>
-    <input type="radio" value={false} bind:group={includeSpot} id="settings-spot-excluded" />
-    <Button for="settings-spot-excluded">Exclude spot</Button>
+    <Button label
+      ><input
+        type="radio"
+        value={true}
+        bind:group={includeSpot}
+        oninput={() => tick().then(() => settingsForm!.requestSubmit())}
+      />Include spot</Button
+    >
+    <Button label
+      ><input type="radio" value={false} bind:group={includeSpot} />
+      Exclude spot</Button
+    >
   </ConnectedButtons>
   <ConnectedButtons>
-    <input type="radio" value={true} bind:group={includeCommunity} id="includeCommunity-true" />
-    <Button for="includeCommunity-true">Include community</Button>
-    <input type="radio" value={false} bind:group={includeCommunity} id="includeCommunity-false" />
-    <Button for="includeCommunity-false">Only secure</Button>
+    <Button label
+      ><input type="radio" value={true} bind:group={includeCommunity} />
+      Include community</Button
+    >
+    <Button label
+      ><input type="radio" value={false} bind:group={includeCommunity} />
+      Only secure</Button
+    >
   </ConnectedButtons>
   <ConnectedButtons>
-    <input type="radio" value="all" bind:group={onlyShow} id="onlyShow-all" />
-    <Button for="onlyShow-all">All</Button>
-    <input type="radio" value="pi" bind:group={onlyShow} id="onlyShow-pi" />
-    <Button for="onlyShow-pi">W/ Prime Intellect</Button>
-    <input type="radio" value="pi-competition" bind:group={onlyShow} id="onlyShow-pi-competition" />
-    <Button for="onlyShow-pi-competition">PI + competition</Button>
+    <Button label
+      ><input type="radio" value="all" bind:group={onlyShow} />
+      All</Button
+    >
+    <Button label
+      ><input type="radio" value="pi" bind:group={onlyShow} />
+      W/ Prime Intellect</Button
+    >
+    <Button label
+      ><input type="radio" value="pi-competition" bind:group={onlyShow} />
+      PI + competition</Button
+    >
   </ConnectedButtons>
   <Slider
     min={0}
@@ -137,15 +149,15 @@
       class:green={enableCheapest && piPrice == cheapestPrice}
       class:red={enableCheapest && piPrice != cheapestPrice}
     >
-      <h2 class="m3-font-headline-large">
+      <h2>
         {gpuMain}
         <span style:opacity="0.5">{gpuRAM}</span>
       </h2>
       {#if enableCheapest}
         {#if piPrice == cheapestPrice}
-          <div class="status colored m3-font-body-large">Yes.</div>
+          <div class="status colored">Yes.</div>
         {:else}
-          <div class="status colored m3-font-body-large">No.</div>
+          <div class="status colored">No.</div>
         {/if}
       {/if}
       {#each leaderboard as [source, { price, provider }]}
@@ -182,9 +194,9 @@
       gap: 0.5rem;
     }
 
-    background-color: rgb(var(--m3-scheme-surface-container-highest));
+    background-color: var(--m3c-surface-container-highest);
     padding: 1rem;
-    border-end-start-radius: var(--m3-util-rounding-large);
+    border-end-start-radius: var(--m3-shape-large);
 
     inset: auto;
     top: 0;
@@ -193,9 +205,9 @@
     .arches {
       display: flex;
       flex-direction: column;
-      --m3-util-density-term: -1rem;
-      > :global(label) {
+      :global(li) {
         margin-inline: -1rem;
+        --density: -4;
       }
     }
   }
@@ -215,10 +227,10 @@
     align-content: start;
     gap: 0.5rem;
     padding: 0.5rem;
-    border-radius: var(--m3-util-rounding-large);
+    border-radius: var(--m3-shape-large);
     > * {
       padding-inline: 0.5rem;
-      border-radius: var(--m3-util-rounding-small);
+      border-radius: var(--m3-shape-small);
     }
 
     &.green {
@@ -236,6 +248,7 @@
   }
 
   h2 {
+    @apply --m3-headline-large;
     display: flex;
     align-items: center;
     gap: 0.5rem;

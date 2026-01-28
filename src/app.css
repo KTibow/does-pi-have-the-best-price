@@ -1,146 +1,65 @@
-@import url("m3-svelte/misc/styles.css");
-@import url("m3-svelte/misc/recommended-styles.css");
-@import url("./tailwind-reset.css");
+@import "@unocss/reset/tailwind-v4.css" layer(base);
+@import "m3-svelte/etc/styles.css";
+@import "m3-svelte/etc/recommended-styles.css";
+@function --m3-density(--size) {
+  result: calc(var(--size) + (var(--density) * 0.25rem));
+}
 :root {
+  @apply --m3-body-large;
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
-  background-color: rgb(var(--m3-scheme-background));
-  color: rgb(var(--m3-scheme-on-background));
+  background-color: var(--m3c-surface);
+  color: var(--m3c-on-surface);
+  box-sizing: border-box;
   font-feature-settings: "tnum";
+  color-scheme: light dark;
+  --density: 0;
 }
 select {
   cursor: pointer;
 }
-@media (prefers-color-scheme: light) {
+@layer tokens {
   :root {
-    color-scheme: light;
-  }
-  :root,
-  ::backdrop {
-    --m3-scheme-background: 249 249 249;
-    --m3-scheme-on-background: 50 50 50;
-    --m3-scheme-surface: 249 249 249;
-    --m3-scheme-surface-dim: 218 218 218;
-    --m3-scheme-surface-bright: 249 249 249;
-    --m3-scheme-surface-container-lowest: 255 255 255;
-    --m3-scheme-surface-container-low: 243 243 243;
-    --m3-scheme-surface-container: 238 238 238;
-    --m3-scheme-surface-container-high: 232 232 232;
-    --m3-scheme-surface-container-highest: 226 226 226;
-    --m3-scheme-on-surface: 50 50 50;
-    --m3-scheme-on-surface-variant: 95 95 95;
-    --m3-scheme-outline: 123 123 123;
-    --m3-scheme-outline-variant: 178 178 178;
-    --m3-scheme-inverse-surface: 14 14 14;
-    --m3-scheme-inverse-on-surface: 157 157 157;
-    --m3-scheme-primary: 95 95 95;
-    --m3-scheme-primary-dim: 83 83 83;
-    --m3-scheme-on-primary: 249 249 249;
-    --m3-scheme-primary-container: 235 235 235;
-    --m3-scheme-on-primary-container: 87 87 87;
-    --m3-scheme-primary-fixed: 235 235 235;
-    --m3-scheme-primary-fixed-dim: 221 221 221;
-    --m3-scheme-on-primary-fixed: 68 68 68;
-    --m3-scheme-on-primary-fixed-variant: 97 97 97;
-    --m3-scheme-inverse-primary: 255 255 255;
-    --m3-scheme-secondary: 95 95 95;
-    --m3-scheme-secondary-dim: 83 83 83;
-    --m3-scheme-on-secondary: 249 249 249;
-    --m3-scheme-secondary-container: 226 226 226;
-    --m3-scheme-on-secondary-container: 82 82 82;
-    --m3-scheme-secondary-fixed: 226 226 226;
-    --m3-scheme-secondary-fixed-dim: 212 212 212;
-    --m3-scheme-on-secondary-fixed: 63 63 63;
-    --m3-scheme-on-secondary-fixed-variant: 91 91 91;
-    --m3-scheme-tertiary: 95 95 95;
-    --m3-scheme-tertiary-dim: 83 83 83;
-    --m3-scheme-on-tertiary: 249 249 249;
-    --m3-scheme-tertiary-container: 255 255 255;
-    --m3-scheme-on-tertiary-container: 98 98 98;
-    --m3-scheme-tertiary-fixed: 255 255 255;
-    --m3-scheme-tertiary-fixed-dim: 241 241 241;
-    --m3-scheme-on-tertiary-fixed: 80 80 80;
-    --m3-scheme-on-tertiary-fixed-variant: 109 109 109;
-    --m3-scheme-error: 187 27 27;
-    --m3-scheme-error-dim: 169 8 16;
-    --m3-scheme-on-error: 255 247 246;
-    --m3-scheme-error-container: 254 78 68;
-    --m3-scheme-on-error-container: 87 0 3;
-    --m3-scheme-shadow: 0 0 0;
-    --m3-scheme-scrim: 0 0 0;
-    --m3-scheme-on-on-primary: 95 95 95;
-    --m3-scheme-primary-container-subtle: 218 218 218;
-    --m3-scheme-on-primary-container-subtle: 76 76 76;
-    --m3-scheme-tertiary-container-subtle: 218 218 218;
-    --m3-scheme-on-tertiary-container-subtle: 76 76 76;
-    --m3-scheme-error-container-subtle: 255 207 201;
-    --m3-scheme-on-error-container-subtle: 158 0 11;
-  }
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-  }
-  :root,
-  ::backdrop {
-    --m3-scheme-background: 14 14 14;
-    --m3-scheme-on-background: 229 229 229;
-    --m3-scheme-surface: 14 14 14;
-    --m3-scheme-surface-dim: 14 14 14;
-    --m3-scheme-surface-bright: 44 44 44;
-    --m3-scheme-surface-container-lowest: 0 0 0;
-    --m3-scheme-surface-container-low: 19 19 19;
-    --m3-scheme-surface-container: 25 25 25;
-    --m3-scheme-surface-container-high: 31 31 31;
-    --m3-scheme-surface-container-highest: 38 38 38;
-    --m3-scheme-on-surface: 229 229 229;
-    --m3-scheme-on-surface-variant: 171 171 171;
-    --m3-scheme-outline: 117 117 117;
-    --m3-scheme-outline-variant: 72 72 72;
-    --m3-scheme-inverse-surface: 249 249 249;
-    --m3-scheme-inverse-on-surface: 85 85 85;
-    --m3-scheme-primary: 249 249 249;
-    --m3-scheme-primary-dim: 235 235 235;
-    --m3-scheme-on-primary: 95 95 95;
-    --m3-scheme-primary-container: 160 160 160;
-    --m3-scheme-on-primary-container: 35 35 35;
-    --m3-scheme-primary-fixed: 235 235 235;
-    --m3-scheme-primary-fixed-dim: 221 221 221;
-    --m3-scheme-on-primary-fixed: 68 68 68;
-    --m3-scheme-on-primary-fixed-variant: 97 97 97;
-    --m3-scheme-inverse-primary: 95 95 95;
-    --m3-scheme-secondary: 198 198 198;
-    --m3-scheme-secondary-dim: 185 185 185;
-    --m3-scheme-on-secondary: 64 64 64;
-    --m3-scheme-secondary-container: 59 59 59;
-    --m3-scheme-on-secondary-container: 191 191 191;
-    --m3-scheme-secondary-fixed: 226 226 226;
-    --m3-scheme-secondary-fixed-dim: 212 212 212;
-    --m3-scheme-on-secondary-fixed: 63 63 63;
-    --m3-scheme-on-secondary-fixed-variant: 91 91 91;
-    --m3-scheme-tertiary: 249 249 249;
-    --m3-scheme-tertiary-dim: 235 235 235;
-    --m3-scheme-on-tertiary: 95 95 95;
-    --m3-scheme-tertiary-container: 235 235 235;
-    --m3-scheme-on-tertiary-container: 87 87 87;
-    --m3-scheme-tertiary-fixed: 255 255 255;
-    --m3-scheme-tertiary-fixed-dim: 241 241 241;
-    --m3-scheme-on-tertiary-fixed: 80 80 80;
-    --m3-scheme-on-tertiary-fixed-variant: 109 109 109;
-    --m3-scheme-error: 255 113 100;
-    --m3-scheme-error-dim: 218 52 46;
-    --m3-scheme-on-error: 74 0 2;
-    --m3-scheme-error-container: 172 12 18;
-    --m3-scheme-on-error-container: 255 184 176;
-    --m3-scheme-shadow: 0 0 0;
-    --m3-scheme-scrim: 0 0 0;
-    --m3-scheme-on-on-primary: 249 249 249;
-    --m3-scheme-primary-container-subtle: 44 44 44;
-    --m3-scheme-on-primary-container-subtle: 171 171 171;
-    --m3-scheme-tertiary-container-subtle: 44 44 44;
-    --m3-scheme-on-tertiary-container-subtle: 171 171 171;
-    --m3-scheme-error-container-subtle: 96 0 4;
-    --m3-scheme-on-error-container-subtle: 255 137 125;
+    --m3c-surface: light-dark(#f9f9f9, #000);
+    --m3c-surface-container-lowest: light-dark(#fff, #0e0e0e);
+    --m3c-surface-container-low: light-dark(#f3f3f3, #1b1b1b);
+    --m3c-surface-container: light-dark(#eee, #1f1f1f);
+    --m3c-surface-container-high: light-dark(#e8e8e8, #2a2a2a);
+    --m3c-surface-container-highest: light-dark(#e2e2e2, #353535);
+    --m3c-on-surface: light-dark(#1b1b1b, #e2e2e2);
+    --m3c-on-surface-variant: light-dark(#474747, #c6c6c6);
+    --m3c-outline: light-dark(#777, #919191);
+    --m3c-outline-variant: light-dark(#c6c6c6, #474747);
+    --m3c-inverse-surface: light-dark(#303030, #e2e2e2);
+    --m3c-inverse-on-surface: light-dark(#f1f1f1, #303030);
+    --m3c-primary: light-dark(#000, #fff);
+    --m3c-on-primary: light-dark(#e2e2e2, #1b1b1b);
+    --m3c-primary-container: light-dark(#3b3b3b, #d4d4d4);
+    --m3c-on-primary-container: light-dark(#fff, #000);
+    --m3c-inverse-primary: light-dark(#c6c6c6, #5e5e5e);
+    --m3c-secondary: light-dark(#5e5e5e, #c6c6c6);
+    --m3c-on-secondary: light-dark(#fff, #1b1b1b);
+    --m3c-secondary-container: light-dark(#d4d4d4, #474747);
+    --m3c-on-secondary-container: light-dark(#1b1b1b, #e2e2e2);
+    --m3c-tertiary: light-dark(#3b3b3b, #e2e2e2);
+    --m3c-on-tertiary: light-dark(#e2e2e2, #1b1b1b);
+    --m3c-tertiary-container: light-dark(#747474, #919191);
+    --m3c-on-tertiary-container: light-dark(#fff, #000);
+    --m3c-error: light-dark(#ba1a1a, #ffb4ab);
+    --m3c-on-error: light-dark(#fff, #690005);
+    --m3c-error-container: light-dark(#ffdad6, #93000a);
+    --m3c-on-error-container: light-dark(#410002, #ffdad6);
+    --m3c-shadow: #000;
+    --m3c-scrim: #000;
+    --m3c-on-on-primary: light-dark(#525252, #9a9a9a);
+    --m3c-primary-container-subtle: light-dark(#dadada, #393939);
+    --m3c-on-primary-container-subtle: light-dark(#4c4c4c, #bcbcbc);
+    --m3c-secondary-container-subtle: light-dark(#dadada, #393939);
+    --m3c-on-secondary-container-subtle: light-dark(#4c4c4c, #bcbcbc);
+    --m3c-tertiary-container-subtle: light-dark(#dadada, #393939);
+    --m3c-on-tertiary-container-subtle: light-dark(#4c4c4c, #bcbcbc);
+    --m3c-error-container-subtle: light-dark(#ffcfc9, #790006);
+    --m3c-on-error-container-subtle: light-dark(#9e000b, #ffa49a);
   }
 }

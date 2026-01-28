@@ -14,7 +14,7 @@
 </script>
 
 {#snippet control(group: string, data: Record<string, string[]>, toggle: Record<string, boolean>)}
-  <ListItem headline={group} label>
+  <ListItem headline={group} lines={1} label>
     {#snippet leading()}
       <div class="box-wrapper">
         <Checkbox
