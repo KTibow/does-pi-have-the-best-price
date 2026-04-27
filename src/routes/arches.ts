@@ -17,7 +17,7 @@ export const professional: Record<string, string[]> = {
   ],
   Hopper: ["H100", "H200", "GH200"],
   Lovelace: ["L4", "L40", "L40S"],
-  Blackwell: [...["B200"], ...["B100"]],
+  Blackwell: [...["B200"], ...["B300"], ...["B100"]],
 };
 export const consumer: Record<string, string[]> = {
   Pascal: ["GTX1050", "GTX1050Ti", "GTX1060", "GTX1070", "GTX1070Ti", "GTX1080", "GTX1080Ti"],

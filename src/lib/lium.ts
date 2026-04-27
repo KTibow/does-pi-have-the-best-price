@@ -8,7 +8,8 @@ const getPage = async (path: string) => {
 
 type Executor = {
   machine_name: string;
-  price_per_hour: number;
+  price_per_gpu: number;
+  gpu_count: number;
   specs: {
     gpu: {
       count: number;

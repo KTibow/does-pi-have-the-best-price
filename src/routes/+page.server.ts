@@ -132,10 +132,10 @@ const load2 = async (excludeSpot: boolean) => {
 const load3 = async () => {
   const getPrice = (price: number) => ({ price, provider: "VC money" });
   const prices = {
-    B200_180GB: getPrice(2.49),
-    B200_180GB_x2: getPrice(2.49 * 2),
-    B200_180GB_x4: getPrice(2.49 * 4),
-    B200_180GB_x8: getPrice(2.49 * 8),
+    B200_180GB: getPrice(2.79),
+    B200_180GB_x2: getPrice(2.79 * 2),
+    B200_180GB_x4: getPrice(2.79 * 4),
+    B200_180GB_x8: getPrice(2.79 * 8),
   };
   return {
     DeepInfra: prices,
@@ -234,10 +234,13 @@ const load6 = async () => {
     if (executor.machine_name == "NVIDIA A100-SXM4-80GB") name = "A100_80GB";
     if (executor.machine_name == "NVIDIA GeForce RTX 3090") name = "RTX3090_24GB";
     if (executor.machine_name == "NVIDIA GeForce RTX 4090") name = "RTX4090_24GB";
+    if (executor.machine_name == "NVIDIA GeForce RTX 5090") name = "RTX5090_32GB";
     if (executor.machine_name == "NVIDIA H100 80GB HBM3") name = "H100_80GB";
     if (executor.machine_name == "NVIDIA H100 PCIe") name = "H100_80GB";
     if (executor.machine_name == "NVIDIA H200") name = "H200_141GB";
     if (executor.machine_name == "NVIDIA B200") name = "B200_180GB";
+    if (executor.machine_name == "NVIDIA B300 SXM6 AC") name = "B300_288GB";
+    if (executor.machine_name.startsWith("NVIDIA RTX PRO 6000")) name = "RTXPro6000B_96GB";
     if (executor.machine_name == "NVIDIA L4") name = "L4_24GB";
     if (executor.machine_name == "NVIDIA RTX A4000") name = "A4000_16GB";
     if (executor.machine_name == "NVIDIA RTX A6000") name = "A6000_48GB";
@@ -247,7 +250,7 @@ const load6 = async () => {
     }
     if (executor.specs.gpu.count > 1) name += `_x${executor.specs.gpu.count}`;
 
-    const price = executor.price_per_hour;
+    const price = executor.price_per_gpu * executor.specs.gpu.count;
     if ((Lium[name]?.price || Infinity) > price) {
       Lium[name] = {
         price,
